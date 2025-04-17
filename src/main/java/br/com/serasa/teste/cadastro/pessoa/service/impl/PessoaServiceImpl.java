@@ -3,12 +3,12 @@ package br.com.serasa.teste.cadastro.pessoa.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PageResponse;
-import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PessoaCompleteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.serasa.teste.cadastro.pessoa.entity.Pessoa;
+import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PageResponse;
+import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PessoaCompleteDTO;
 import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PessoaDTO;
 import br.com.serasa.teste.cadastro.pessoa.repository.PessoaRepository;
 import br.com.serasa.teste.cadastro.pessoa.service.PessoaService;

@@ -1,5 +1,7 @@
 package br.com.serasa.teste.cadastro.pessoa.model.pessoa;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -22,7 +24,8 @@ public class PessoaDTO {
     public PessoaDTO() {
     }
 
-    public PessoaDTO(String nome, int idade, String cep, String estado, String cidade, String bairro, String logradouro, String telefone, int score) {
+    public PessoaDTO(String nome, int idade, String cep, String estado, String cidade, String bairro, String logradouro,
+            String telefone, int score) {
         this.nome = nome;
         this.idade = idade;
         this.cep = cep;

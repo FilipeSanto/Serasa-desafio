@@ -26,8 +26,8 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers(HttpMethod.POST, "/h2-console/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/h2-console/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/h2-console/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/login.html").permitAll()
@@ -35,24 +35,24 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/pessoa/listar-ativos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/pessoa/listar").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/endereco/busca-cep").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/endereco/busca-cep").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/pessoa/cadastrar").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/pessoa/ativar/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/pessoa/desativar/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

@@ -1,11 +1,12 @@
 package br.com.serasa.teste.cadastro.pessoa.itg.service.impl;
 
-import br.com.serasa.teste.cadastro.pessoa.itg.dto.EnderecoDTO;
-import br.com.serasa.teste.cadastro.pessoa.itg.service.ConsultaCepService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import br.com.serasa.teste.cadastro.pessoa.itg.dto.EnderecoDTO;
+import br.com.serasa.teste.cadastro.pessoa.itg.service.ConsultaCepService;
 
 @Service
 public class ConsultaCepServiceImpl implements ConsultaCepService {

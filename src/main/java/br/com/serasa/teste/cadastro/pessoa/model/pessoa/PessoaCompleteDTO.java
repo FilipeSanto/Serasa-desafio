@@ -3,7 +3,7 @@ package br.com.serasa.teste.cadastro.pessoa.model.pessoa;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
-public class PessoaCompleteDTO extends PessoaDTO{
+public class PessoaCompleteDTO extends PessoaDTO {
     private Long id;
     private boolean ativo;
 
@@ -12,7 +12,8 @@ public class PessoaCompleteDTO extends PessoaDTO{
         this.ativo = ativo;
     }
 
-    public PessoaCompleteDTO(String nome, int idade, String cep, String estado, String cidade, String bairro, String logradouro, String telefone, int score, Long id, boolean ativo) {
+    public PessoaCompleteDTO(String nome, int idade, String cep, String estado, String cidade, String bairro,
+            String logradouro, String telefone, int score, Long id, boolean ativo) {
         super(nome, idade, cep, estado, cidade, bairro, logradouro, telefone, score);
         this.id = id;
         this.ativo = ativo;

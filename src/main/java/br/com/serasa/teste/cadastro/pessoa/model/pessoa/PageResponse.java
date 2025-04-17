@@ -1,8 +1,8 @@
 package br.com.serasa.teste.cadastro.pessoa.model.pessoa;
 
-import lombok.Getter;
-
 import java.util.List;
+
+import lombok.Getter;
 
 @Getter
 public class PageResponse<T> {

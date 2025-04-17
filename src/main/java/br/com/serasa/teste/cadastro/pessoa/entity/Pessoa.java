@@ -29,7 +29,8 @@ public class Pessoa {
     public Pessoa() {
     }
 
-    public Pessoa(Long id, String nome, int idade, String cep, String estado, String cidade, String bairro, String logradouro, String telefone, int score, boolean ativo) {
+    public Pessoa(Long id, String nome, int idade, String cep, String estado, String cidade, String bairro,
+            String logradouro, String telefone, int score, boolean ativo) {
         this.id = id;
         this.nome = nome;
         this.idade = idade;

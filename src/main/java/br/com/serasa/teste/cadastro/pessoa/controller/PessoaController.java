@@ -1,17 +1,21 @@
 package br.com.serasa.teste.cadastro.pessoa.controller;
 
-import java.util.List;
-
-import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PageResponse;
-import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PessoaCompleteDTO;
-import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PageResponse;
+import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PessoaCompleteDTO;
 import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PessoaDTO;
 import br.com.serasa.teste.cadastro.pessoa.service.PessoaService;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("api/pessoa")
@@ -45,7 +49,7 @@ public class PessoaController {
 
     @PutMapping("/ativar/{id}")
     public ResponseEntity<Void> ativarPessoa(@PathVariable Long id) {
-            pessoaService.ativarPessoa(id);
-            return ResponseEntity.noContent().build();
+        pessoaService.ativarPessoa(id);
+        return ResponseEntity.noContent().build();
     }
 }
