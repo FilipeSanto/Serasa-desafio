@@ -1,12 +1,12 @@
 package br.com.serasa.teste.cadastro.pessoa.model.pessoa;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 
-@Builder
 @AllArgsConstructor
+@SuperBuilder
 public class PessoaDTO {
-    private Long id;
+
     private String nome;
     private int idade;
     private String cep;
@@ -18,13 +18,11 @@ public class PessoaDTO {
     private String logradouro;
     private String telefone;
     private int score;
-    private boolean ativo;
 
     public PessoaDTO() {
     }
 
-    public PessoaDTO(Long id, String nome, int idade, String cep, String estado, String cidade, String bairro, String logradouro, String telefone, int score) {
-        this.id = id;
+    public PessoaDTO(String nome, int idade, String cep, String estado, String cidade, String bairro, String logradouro, String telefone, int score) {
         this.nome = nome;
         this.idade = idade;
         this.cep = cep;
@@ -42,14 +40,6 @@ public class PessoaDTO {
 
     public void setDescScore(String descScore) {
         this.descScore = descScore;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     @JsonProperty
@@ -124,14 +114,6 @@ public class PessoaDTO {
 
     public void setScore(int score) {
         this.score = score;
-    }
-
-    public boolean isAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
     }
 
     public void validarScore() {

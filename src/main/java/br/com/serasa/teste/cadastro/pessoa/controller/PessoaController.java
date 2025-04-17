@@ -2,6 +2,8 @@ package br.com.serasa.teste.cadastro.pessoa.controller;
 
 import java.util.List;
 
+import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PageResponse;
+import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PessoaCompleteDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,12 +28,12 @@ public class PessoaController {
     }
 
     @GetMapping("/listar")
-    public List<PessoaDTO> listarPessoas() {
+    public PageResponse<PessoaCompleteDTO> listarPessoas() {
         return pessoaService.listarPessoas();
     }
 
     @GetMapping("/listar-ativos")
-    public List<PessoaDTO> listarPessoasAtivas() {
+    public PageResponse<PessoaDTO> listarPessoasAtivas() {
         return pessoaService.listarPessoasAtivas();
     }
 

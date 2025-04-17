@@ -3,6 +3,8 @@ package br.com.serasa.teste.cadastro.pessoa.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PageResponse;
+import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PessoaCompleteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +25,16 @@ public class PessoaServiceImpl implements PessoaService {
     }
 
     @Override
-    public List<PessoaDTO> listarPessoas() {
+    public PageResponse<PessoaCompleteDTO> listarPessoas() {
         List<Pessoa> pessoas = pessoaRepository.findAll();
-        return convertResponse(pessoas);
+        return convertCompleteResponse(pessoas, 2, 10);
 
     }
 
     @Override
-    public List<PessoaDTO> listarPessoasAtivas() {
+    public PageResponse<PessoaDTO> listarPessoasAtivas() {
         List<Pessoa> pessoas = pessoaRepository.findAllAtivos();
-        return convertResponse(pessoas);
+        return convertResponse(pessoas, 2, 10);
 
     }
 
@@ -59,10 +61,15 @@ public class PessoaServiceImpl implements PessoaService {
 
     }
 
-    private List<PessoaDTO> convertResponse(List<Pessoa> pessoas) {
-        return pessoas.stream()
+    private PageResponse<PessoaCompleteDTO> convertCompleteResponse(List<Pessoa> pessoas, int page, int size) {
+        int totalElements = pessoas.size();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        List<PessoaCompleteDTO> content = pessoas.stream()
+                .skip((long) (page - 1) * size)
+                .limit(size)
                 .map(pessoa -> {
-                    PessoaDTO pessoaDTO = PessoaDTO.builder()
+                    PessoaCompleteDTO pessoaDTO = PessoaCompleteDTO.builder()
                             .id(pessoa.getId())
                             .nome(pessoa.getNome())
                             .idade(pessoa.getIdade())
@@ -79,6 +86,35 @@ public class PessoaServiceImpl implements PessoaService {
                     return pessoaDTO;
                 })
                 .collect(Collectors.toList());
+
+        return new PageResponse<>(content, page, totalPages, totalElements);
+    }
+
+    public PageResponse<PessoaDTO> convertResponse(List<Pessoa> pessoas, int page, int size) {
+        int totalElements = pessoas.size();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        List<PessoaDTO> content = pessoas.stream()
+                .skip((long) (page - 1) * size)
+                .limit(size)
+                .map(pessoa -> {
+                    PessoaDTO pessoaDTO = PessoaDTO.builder()
+                            .nome(pessoa.getNome())
+                            .idade(pessoa.getIdade())
+                            .cep(pessoa.getCep())
+                            .estado(pessoa.getEstado())
+                            .cidade(pessoa.getCidade())
+                            .bairro(pessoa.getBairro())
+                            .logradouro(pessoa.getLogradouro())
+                            .telefone(pessoa.getTelefone())
+                            .score(pessoa.getScore())
+                            .build();
+                    pessoaDTO.validarScore();
+                    return pessoaDTO;
+                })
+                .collect(Collectors.toList());
+
+        return new PageResponse<>(content, page, totalPages, totalElements);
     }
 
     private Pessoa buildPessoa(PessoaDTO request) {
