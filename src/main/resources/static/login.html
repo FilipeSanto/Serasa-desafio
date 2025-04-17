@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+<h1>Login</h1>
+<form id="loginForm">
+    <label for="login">Usuário:</label>
+    <input type="text" id="login" name="login" required><br><br>
+
+    <label for="password">Senha:</label>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <button type="button" onclick="submitForm()">Entrar</button>
+</form>
+
+<script>
+    async function submitForm() {
+        const login = document.getElementById("login").value;
+        const password = document.getElementById("password").value;
+
+        try {
+            const response = await fetch('http://localhost:8080/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ login, password })
+            });
+
+            if (!response.ok) {
+                // Exibe erro apropriado para o usuário
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Login ou senha inválidos");
+            }
+
+            const data = await response.json();
+            alert("Token gerado: " + data.token);
+
+            // Armazena o token no localStorage para uso futuro
+            localStorage.setItem("jwtToken", data.token);
+
+            // Redireciona para outra página (ex.: home.html) após o login
+            window.location.href = "../listar-pessoas.html";
+        } catch (error) {
+            console.error("Erro ao realizar o login:", error);
+            alert("Erro ao realizar o login: " + error.message);
+        }
+    }
+</script>
+</body>
+</html>

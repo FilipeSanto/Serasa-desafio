@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Pessoas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        input {
+            margin: 10px 5px;
+            padding: 5px;
+        }
+        .pagination {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .pagination button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>Lista de Pessoas</h1>
+
+<div>
+    <label for="filtroNome">Filtrar por Nome:</label>
+    <input type="text" id="filtroNome" oninput="aplicarFiltros()">
+
+    <label for="filtroIdade">Filtrar por Idade:</label>
+    <input type="text" id="filtroIdade" oninput="aplicarFiltros()">
+
+    <label for="filtroCep">Filtrar por CEP:</label>
+    <input type="text" id="filtroCep" oninput="aplicarFiltros()">
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Idade</th>
+        <th>CEP</th>
+        <th>Estado</th>
+        <th>Cidade</th>
+        <th>Bairro</th>
+        <th>Logradouro</th>
+        <th>Telefone</th>
+        <th>Descrição</th>
+        <th>Status</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody id="tabelaPessoas">
+    </tbody>
+</table>
+
+<div class="pagination">
+    <button id="prevPage" onclick="mudarPagina(-1)">Anterior</button>
+    <span id="currentPage">Página: 1</span>
+    <button id="nextPage" onclick="mudarPagina(1)">Próxima</button>
+</div>
+
+<script>
+    let pessoas = [];
+    let pessoasFiltradas = [];
+    let paginaAtual = 1;
+    const registrosPorPagina = 5;
+
+    async function carregarDados() {
+        try {
+            const response = await fetch('http://localhost:8080/api/pessoa/listar');
+            if (!response.ok) throw new Error('Erro ao buscar os dados');
+            pessoas = await response.json();
+            pessoasFiltradas = [...pessoas];
+            carregarLista();
+        } catch (error) {
+            console.error('Erro ao carregar os dados:', error);
+        }
+    }
+
+    function carregarLista() {
+        const tabela = document.getElementById("tabelaPessoas");
+        tabela.innerHTML = "";
+
+        const inicio = (paginaAtual - 1) * registrosPorPagina;
+        const fim = inicio + registrosPorPagina;
+        const registrosPagina = pessoasFiltradas.slice(inicio, fim);
+
+        registrosPagina.forEach(pessoa => {
+            const botaoAcao = pessoa.ativo
+                ? `<button onclick="alterarStatus(${pessoa.id}, false)">Desativar</button>`
+                : `<button onclick="alterarStatus(${pessoa.id}, true)">Ativar</button>`;
+
+            const linha = `
+                <tr>
+                    <td>${pessoa.id}</td>
+                    <td>${pessoa.nome}</td>
+                    <td>${pessoa.idade}</td>
+                    <td>${pessoa.cep}</td>
+                    <td>${pessoa.estado}</td>
+                    <td>${pessoa.cidade}</td>
+                    <td>${pessoa.bairro}</td>
+                    <td>${pessoa.logradouro}</td>
+                    <td>${pessoa.telefone}</td>
+                    <td>${pessoa.descScore}</td>
+                    <td>${pessoa.ativo === true ? 'Ativo' : 'Inativo'}</td>
+                    <td>${botaoAcao}</td>
+                </tr>
+            `;
+            tabela.innerHTML += linha;
+        });
+
+        document.getElementById('currentPage').innerText = `Página: ${paginaAtual}`;
+        verificarBotoes();
+    }
+
+    function aplicarFiltros() {
+        const nomeFiltro = document.getElementById("filtroNome").value.toLowerCase();
+        const idadeFiltro = document.getElementById("filtroIdade").value;
+        const cepFiltro = document.getElementById("filtroCep").value;
+
+        pessoasFiltradas = pessoas.filter(pessoa => {
+            return (
+                (!nomeFiltro || pessoa.nome.toLowerCase().includes(nomeFiltro)) &&
+                (!idadeFiltro || pessoa.idade.includes(idadeFiltro)) &&
+                (!cepFiltro || pessoa.cep.includes(cepFiltro))
+            );
+        });
+
+        paginaAtual = 1;
+        carregarLista();
+    }
+
+    function mudarPagina(direcao) {
+        paginaAtual += direcao;
+        carregarLista();
+    }
+
+    function verificarBotoes() {
+        document.getElementById('prevPage').disabled = paginaAtual === 1;
+        document.getElementById('nextPage').disabled = paginaAtual === Math.ceil(pessoasFiltradas.length / registrosPorPagina);
+    }
+
+    async function alterarStatus(id, novoStatus) {
+        try {
+            const endpoint = novoStatus ? `/ativar` : `/desativar`;
+            const response = await fetch(`http://localhost:8080/api/pessoa${endpoint}/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) throw new Error('Erro ao alterar o status');
+
+            // Atualiza o status no array de dados
+            const pessoa = pessoas.find(p => p.id === id);
+            if (pessoa) {
+                pessoa.ativo = novoStatus;
+            }
+
+            carregarLista(); // Recarrega a tabela
+        } catch (error) {
+            console.error('Erro ao alterar o status:', error);
+            alert('Não foi possível alterar o status da pessoa.');
+        }
+    }
+
+    carregarDados();
+</script>
+</body>
+</html>

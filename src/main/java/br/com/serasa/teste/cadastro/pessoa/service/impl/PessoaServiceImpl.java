@@ -1,40 +1,97 @@
 package br.com.serasa.teste.cadastro.pessoa.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.serasa.teste.cadastro.pessoa.itg.dto.EnderecoDTO;
-import br.com.serasa.teste.cadastro.pessoa.itg.service.ConsultaCepService;
-import br.com.serasa.teste.cadastro.pessoa.model.DadosCepDTO;
-import br.com.serasa.teste.cadastro.pessoa.model.PessoaDTO;
+import br.com.serasa.teste.cadastro.pessoa.entity.Pessoa;
+import br.com.serasa.teste.cadastro.pessoa.model.pessoa.PessoaDTO;
+import br.com.serasa.teste.cadastro.pessoa.repository.PessoaRepository;
 import br.com.serasa.teste.cadastro.pessoa.service.PessoaService;
 
 @Service
 public class PessoaServiceImpl implements PessoaService {
 
     @Autowired
-    ConsultaCepService consultaCepService;
-
-    @Override
-    public DadosCepDTO buscaCep(String cep) {
-        EnderecoDTO response = consultaCepService.consultaCep(cep);
-        return buildResponse(response);
-    }
-
-    private DadosCepDTO buildResponse(EnderecoDTO response) {
-
-        return DadosCepDTO.builder()
-                .cep(response.getCep())
-                .bairro(response.getBairro())
-                .cidade(response.getLocalidade())
-                .estado(response.getEstado())
-                .logradouro(response.getLogradouro())
-                .build();
-
-    }
+    private PessoaRepository pessoaRepository;
 
     @Override
     public void cadastraPessoa(PessoaDTO request) {
+        pessoaRepository.save(buildPessoa(request));
+    }
 
+    @Override
+    public List<PessoaDTO> listarPessoas() {
+        List<Pessoa> pessoas = pessoaRepository.findAll();
+        return convertResponse(pessoas);
+
+    }
+
+    @Override
+    public List<PessoaDTO> listarPessoasAtivas() {
+        List<Pessoa> pessoas = pessoaRepository.findAllAtivos();
+        return convertResponse(pessoas);
+
+    }
+
+    @Override
+    public void excluirPessoa(Long id) {
+        Pessoa pessoa = pessoaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com ID: " + id));
+        pessoa.desativar();
+        pessoaRepository.save(pessoa);
+
+    }
+
+    @Override
+    public void ativarPessoa(Long id) {
+        Pessoa pessoa = pessoaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com ID: " + id));
+
+        if (Boolean.TRUE.equals(pessoa.getAtivo())) {
+            throw new RuntimeException("Pessoa já está ativa.");
+        }
+
+        pessoa.ativar();
+        pessoaRepository.save(pessoa);
+
+    }
+
+    private List<PessoaDTO> convertResponse(List<Pessoa> pessoas) {
+        return pessoas.stream()
+                .map(pessoa -> {
+                    PessoaDTO pessoaDTO = PessoaDTO.builder()
+                            .id(pessoa.getId())
+                            .nome(pessoa.getNome())
+                            .idade(pessoa.getIdade())
+                            .cep(pessoa.getCep())
+                            .estado(pessoa.getEstado())
+                            .cidade(pessoa.getCidade())
+                            .bairro(pessoa.getBairro())
+                            .logradouro(pessoa.getLogradouro())
+                            .telefone(pessoa.getTelefone())
+                            .score(pessoa.getScore())
+                            .ativo(pessoa.getAtivo())
+                            .build();
+                    pessoaDTO.validarScore();
+                    return pessoaDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private Pessoa buildPessoa(PessoaDTO request) {
+        return Pessoa.builder()
+                .nome(request.getNome())
+                .idade(request.getIdade())
+                .cep(request.getCep().replace("-", ""))
+                .estado(request.getEstado())
+                .cidade(request.getCidade())
+                .bairro(request.getBairro())
+                .logradouro(request.getLogradouro())
+                .telefone(request.getTelefone())
+                .score(request.getScore())
+                .build();
     }
 }

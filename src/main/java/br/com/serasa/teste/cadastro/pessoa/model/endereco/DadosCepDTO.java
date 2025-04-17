@@ -1,4 +1,4 @@
-package br.com.serasa.teste.cadastro.pessoa.model;
+package br.com.serasa.teste.cadastro.pessoa.model.endereco;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

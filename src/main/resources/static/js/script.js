@@ -6,10 +6,9 @@ document.getElementById("buscar-cep").addEventListener("click", () => {
         return;
     }
 
-    // Criar o payload correspondente ao CepRequestDTO
     const requestPayload = { cep: cep };
 
-    fetch("http://localhost:8080/pessoa/busca-cep", {
+    fetch("http://localhost:8080/api/endereco/busca-cep", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -23,7 +22,6 @@ document.getElementById("buscar-cep").addEventListener("click", () => {
         return response.json();
     })
     .then(data => {
-        // Preenche os campos do formulário com os dados retornados
         document.getElementById("estado").value = data.estado || "";
         document.getElementById("cidade").value = data.cidade || "";
         document.getElementById("bairro").value = data.bairro || "";
@@ -31,13 +29,12 @@ document.getElementById("buscar-cep").addEventListener("click", () => {
     })
     .catch(error => {
         console.error(error);
-        alert("Não foi possível buscar o CEP.");
+        alert("Não foi possível buscar o CEP. Verifique o CEP e tente novamente.");
     });
 });
 
-// Função para submissão do formulário
 document.getElementById("form").addEventListener("submit", (event) => {
-    event.preventDefault(); // Previne envio padrão do formulário
+    event.preventDefault();
     const dados = {
         nome: document.getElementById("nome").value,
         idade: document.getElementById("idade").value,
@@ -50,6 +47,28 @@ document.getElementById("form").addEventListener("submit", (event) => {
         score: document.getElementById("score").value,
     };
 
-    console.log("Dados cadastrados:", dados);
-    alert("Cadastro realizado com sucesso!");
+    fetch("http://localhost:8080/api/pessoa/cadastrar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dados)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(err => {
+                throw new Error(err || "Erro ao cadastrar a pessoa.");
+            });
+        }
+        return response.text();
+    })
+    .then(data => {
+        alert(data);
+        console.log("Resposta do backend:", data);
+        window.location.href = "../listar-pessoas.html";
+    })
+    .catch(error => {
+        console.error(error);
+        alert("Não foi possível realizar o cadastro. Motivo: " + error.message);
+    });
 });
